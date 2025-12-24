@@ -1,16 +1,10 @@
-# DEPRECATED
-
 <p>
-   This repository is no longer supported, please consider using alternatives.
+   <i>This repository is no longer supported, please consider using alternatives.</i>
 </p>
 
-[![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
+
 
 <p align="center">
-  <a href="https://ned.im/noty?ref=readme">
-    <img src="https://ned.im/noty/_media/noty-v3-logo.png" width=200 height=70>
-  </a>
-
   <p align="center">
     Dependency-free notification library.
     <br>
@@ -18,18 +12,8 @@
   </p>
 
   <p align="center">
-    <a href="https://github.com/needim/noty/releases"><img src="https://img.shields.io/github/release/needim/noty.svg" alt="GitHub release"></a>
-    <a href="https://bower.io/"><img src="https://img.shields.io/bower/v/noty.svg" alt="Bower version"></a>
-    <a href="https://www.npmjs.com/package/noty"><img src="https://img.shields.io/npm/v/noty.svg" alt="NPM version"></a>
-    <a href="https://packagist.org/packages/needim/noty"><img src="https://img.shields.io/packagist/v/needim/noty.svg" alt="Packagist version"></a>
-    <a href="https://cdnjs.com/libraries/noty"><img src="https://img.shields.io/cdnjs/v/noty.svg" alt="CDNJS version"></a>
-    <br>
-    <img src="https://img.shields.io/david/needim/noty.svg" alt="Dependencies">
-    <img src="https://img.shields.io/david/dev/needim/noty.svg" alt="Dev Dependencies">
-    <br>
-    <a href="https://travis-ci.org/needim/noty"><img src="https://img.shields.io/travis/needim/noty/master.svg" alt="Travis"></a>
-    <a href="https://www.npmjs.com/package/noty"><img src="https://img.shields.io/npm/dm/noty.svg?label=npm%20downloads" alt="NPM Downloads"></a>
-    <a href="https://github.com/needim/noty/graphs/contributors"><img src="https://img.shields.io/github/contributors/needim/noty.svg" alt="Contributors"></a>
+    <a href="https://github.com/wobal/noty/releases"><img src="https://img.shields.io/github/release/needim/noty.svg" alt="GitHub release"></a>    
+    <a href="https://www.npmjs.com/package/wobal-noty"><img src="https://img.shields.io/npm/v/noty.svg" alt="NPM version"></a>
   </p>
 </p>
 
