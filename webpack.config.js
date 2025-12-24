@@ -1,98 +1,91 @@
 /* global __dirname, require, module */
-'use strict'
+'use strict';
 
-const webpack = require('webpack')
-const path = require('path')
-const env = require('yargs').argv.env
-const ExtractTextPlugin = require('extract-text-webpack-plugin')
-const extractSass = new ExtractTextPlugin({filename: 'noty.css'})
-const UglifyJsPlugin = webpack.optimize.UglifyJsPlugin
-const BrowserSyncPlugin = require('browser-sync-webpack-plugin')
+const path = require('path');
+const webpack = require('webpack');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 
-let libraryName = 'Noty'
-let plugins = []
-let outputFile
+const libraryName = 'Noty';
 
-plugins.push(extractSass)
-plugins.push(new webpack.DefinePlugin({
-  VERSION: JSON.stringify(require('./package.json').version)
-}))
+module.exports = (env, argv) => {
+  const isProd = argv.mode === 'production';
+  const outputFile = isProd ? libraryName.toLowerCase() + '.min.js' : libraryName.toLowerCase() + '.js';
 
-if (env === 'build') {
-  plugins.push(new UglifyJsPlugin({minimize: true, sourceMap: true}))
-  outputFile = libraryName.toLowerCase() + '.min.js'
-} else {
-  outputFile = libraryName.toLowerCase() + '.js'
-  plugins.push(new BrowserSyncPlugin({
-    ui: false,
-    host: 'localhost',
-    port: 3000,
-    server: {
-      baseDir: ['./'],
-      index: 'demo/index.html'
-    }
-  }))
-}
-
-const config = {
-  entry: path.join(__dirname, '/src/index.js'),
-  devtool: 'source-map',
-  output: {
-    path: path.join(__dirname, '/lib'),
-    filename: outputFile,
-    library: libraryName,
-    libraryTarget: 'umd',
-    umdNamedDefine: true
-  },
-  module: {
-    rules: [
-      {
-        // standard-loader as a preloader
-        enforce: 'pre',
-        test: /\.js?$/,
-        loader: 'standard-loader',
-        exclude: /(node_modules|bower_components)/,
-        options: {
-          error: false,
-          snazzy: true,
-          parser: 'babel-eslint'
-        }
-      },
-      {
-        test: /\.js$/,
-        loader: 'babel-loader',
-        exclude: /(node_modules|bower_components)/
-      },
-      {
-        test: /\.scss$/,
-        use: extractSass.extract({
+  return {
+    entry: path.join(__dirname, '/src/index.js'),
+    devtool: 'source-map',
+    output: {
+      path: path.join(__dirname, '/lib'),
+      filename: outputFile,
+      library: libraryName,
+      libraryTarget: 'umd',
+      umdNamedDefine: true,
+      // Nécessaire pour la compatibilité UMD dans les environnements Node/Browser
+      globalObject: "typeof self !== 'undefined' ? self : this"
+    },
+    module: {
+      rules: [
+        {
+          test: /\.js$/,
+          exclude: /node_modules/,
+          use: {
+            loader: 'babel-loader',
+            options: {
+              presets: [['@babel/preset-env', { targets: "defaults" }]]
+            }
+          }
+        },
+        {
+          test: /\.scss$/,
           use: [
+            // Extrait le CSS dans un fichier séparé (noty.css)
+            MiniCssExtractPlugin.loader,
             {
-              loader: 'css-loader'
+              loader: 'css-loader',
+              options: { sourceMap: true }
             },
             {
-              loader: 'postcss-loader'
+              loader: 'postcss-loader',
+              options: { sourceMap: true }
             },
             {
               loader: 'sass-loader',
-              options: {
-                // CRUCIAL : On force l'utilisation de Dart Sass (le package 'sass')
-                // au lieu de node-sass qui ne peut pas compiler sur ta version de Node
+              options: { 
+                sourceMap: true,
+                // Utilise automatiquement le package 'sass' (Dart Sass) défini dans le package.json
                 implementation: require('sass')
               }
             }
-          ],
-          fallback: 'style-loader'
+          ]
+        }
+      ]
+    },
+    resolve: {
+      extensions: ['.js', '.scss']
+    },
+    optimization: {
+      minimize: isProd,
+      minimizer: [
+        new TerserPlugin({
+          terserOptions: {
+            format: {
+              comments: false,
+            },
+          },
+          extractComments: false,
         }),
-        exclude: /(node_modules|bower_components)/
-      }
+      ],
+    },
+    plugins: [
+      // Remplace l'ancien ExtractTextPlugin
+      new MiniCssExtractPlugin({
+        filename: 'noty.css'
+      }),
+      // Injecte la version du package.json dans le code
+      new webpack.DefinePlugin({
+        VERSION: JSON.stringify(require('./package.json').version)
+      })
     ]
-  },
-  resolve: {
-    modules: [path.resolve('./src'), path.resolve('./node_modules')],
-    extensions: ['.js', '.scss']
-  },
-  plugins: plugins
-}
-
-module.exports = config
+  };
+};
