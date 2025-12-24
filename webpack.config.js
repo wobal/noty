@@ -69,8 +69,7 @@ module.exports = (env, argv) => {
         'utils': path.resolve(__dirname, 'src/utils.js'),
         'api': path.resolve(__dirname, 'src/api.js'),
         'button': path.resolve(__dirname, 'src/button.js'),
-        'push': path.resolve(__dirname, 'src/push.js'),
-        'es6-promise': path.resolve(__dirname, 'node_modules/es6-promise')
+        'push': path.resolve(__dirname, 'src/push.js')
       }      
     },
     optimization: {
