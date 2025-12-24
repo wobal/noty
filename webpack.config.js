@@ -63,7 +63,15 @@ module.exports = (env, argv) => {
     },
     resolve: {
       extensions: ['.js', '.scss'],
-      preferRelative: true
+      preferRelative: true,
+      alias: {
+        'noty.scss': path.resolve(__dirname, 'src/noty.scss'),
+        'utils': path.resolve(__dirname, 'src/utils.js'),
+        'api': path.resolve(__dirname, 'src/api.js'),
+        'button': path.resolve(__dirname, 'src/button.js'),
+        'push': path.resolve(__dirname, 'src/push.js'),
+        'es6-promise': path.resolve(__dirname, 'node_modules/es6-promise')
+      }      
     },
     optimization: {
       minimize: isProd,
