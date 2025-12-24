@@ -23,10 +23,11 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 'lts/*'
+          node-version: '10' # Très important : Noty (Webpack 2 / Node-Sass 4) a besoin d'une version ancienne de Node pour compiler
+          registry-url: 'https://registry.npmjs.org/'
 
-      - name: Install dependencies
-        run: npm install
+      - name: Install dependencies        
+        run: npm install --legacy-peer-deps # Pour éviter les conflits de dépendances anciennes
 
       - name: Compile with Webpack
         run: npm run build
@@ -62,5 +63,5 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: wobal-dist
-          path: dist/
+          name: wobal-lib
+          path: lib/
