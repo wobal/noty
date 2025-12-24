@@ -65,7 +65,25 @@ const config = {
       },
       {
         test: /\.scss$/,
-        use: extractSass.extract(['css-loader', 'postcss-loader', 'sass-loader']),
+        use: extractSass.extract({
+          use: [
+            {
+              loader: 'css-loader'
+            },
+            {
+              loader: 'postcss-loader'
+            },
+            {
+              loader: 'sass-loader',
+              options: {
+                // CRUCIAL : On force l'utilisation de Dart Sass (le package 'sass')
+                // au lieu de node-sass qui ne peut pas compiler sur ta version de Node
+                implementation: require('sass')
+              }
+            }
+          ],
+          fallback: 'style-loader'
+        }),
         exclude: /(node_modules|bower_components)/
       }
     ]
