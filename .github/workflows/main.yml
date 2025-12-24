@@ -25,12 +25,13 @@ jobs:
       - name: Configuration de Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 'lts/*'
+          node-version: '20' # On fixe la version 20 pour éviter Node 24 (trop récent)
           registry-url: 'https://registry.npmjs.org/'
-          cache: 'npm'
+          # Cache désactivé temporairement car package-lock.json est absent
+          # cache: 'npm' 
 
       - name: Installation des dépendances
-        # Plus besoin de --ignore-scripts ou --legacy-peer-deps avec le nouveau package.json
+        # npm install créera un nouveau package-lock.json durant le workflow
         run: npm install
 
       - name: Mise à jour de la version (Manuel uniquement)
@@ -41,8 +42,6 @@ jobs:
         run: npm run build
 
       - name: Publication sur NPM
-        # La branche 'if' permet d'éviter de publier sur chaque push si tu ne le souhaites pas
-        # Ou alors on publie uniquement lors d'un déclenchement manuel (workflow_dispatch)
         if: github.event_name == 'workflow_dispatch'
         run: npm publish --access public
         env:
