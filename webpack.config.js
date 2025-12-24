@@ -62,7 +62,8 @@ module.exports = (env, argv) => {
       ]
     },
     resolve: {
-      extensions: ['.js', '.scss']
+      extensions: ['.js', '.scss'],
+      preferRelative: true
     },
     optimization: {
       minimize: isProd,
