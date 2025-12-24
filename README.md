@@ -12,8 +12,8 @@
   </p>
 
   <p align="center">
-    <a href="https://github.com/wobal/noty/releases"><img src="https://img.shields.io/github/release/needim/noty.svg" alt="GitHub release"></a>    
-    <a href="https://www.npmjs.com/package/wobal-noty"><img src="https://img.shields.io/npm/v/noty.svg" alt="NPM version"></a>
+    <a href="https://github.com/wobal/noty/releases"><img src="https://img.shields.io/github/release/wobal/noty.svg" alt="GitHub release"></a>    
+    <a href="https://www.npmjs.com/package/wobal-noty"><img src="https://img.shields.io/npm/v/wobal-noty.svg" alt="NPM version"></a>
   </p>
 </p>
 
