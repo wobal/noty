@@ -1,6 +1,6 @@
 {
-  "name": "noty",
-  "version": "3.2.0-beta",
+  "name": "wobal-noty",
+  "version": "3.2.1",
   "title": "Noty - Dependency-free notification library",
   "description": "Noty is a dependency-free notification library that makes it easy to create alert - success - error - warning - information - confirmation messages as an alternative the standard alert dialog. Each notification is added to a queue. (Optional)",
   "homepage": "https://ned.im/noty",
