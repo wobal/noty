@@ -25,11 +25,18 @@ jobs:
         with:
           node-version: 'lts/*'
 
-      - name: Install dependencies        
-        run: npm install
+      - name: Clean & Install dependencies
+        run: |
+          # On s'assure de ne pas avoir de résidus
+          rm -f package-lock.json
+          # --ignore-scripts : Empêche node-sass de tenter de compiler son binaire cassé
+          # --legacy-peer-deps : Évite les conflits de versions sur les vieux plugins Grunt/Webpack
+          npm install --ignore-scripts --legacy-peer-deps
 
       - name: Compile with Webpack
         run: npm run build
+        env:
+          NODE_OPTIONS: --openssl-legacy-provider
 
       - name: Force package name for npm publish
         run: |
