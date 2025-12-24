@@ -2,72 +2,54 @@ name: Build Noty & Publish
 
 on:
   push:
-    branches: [ "main", "operate-scale" ]
+    branches: [ "main", "master", "operate-scale" ]
     paths:
       - 'src/**'
-  workflow_dispatch: # Ajout pour permettre le déclenchement manuel
+      - 'package.json'
+      - 'webpack.config.js'
+  workflow_dispatch:
     inputs:
       version:
-        description: 'Version to publish (e.g., 1.0.0, 1.0.0-beta.1)'
+        description: 'Version à publier (ex: 3.2.1)'
         required: true
         type: string
 
 jobs:
-  build:
+  build-and-publish:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout du code
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
+      - name: Configuration de Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 'lts/*'
+          registry-url: 'https://registry.npmjs.org/'
+          cache: 'npm'
 
-      - name: Clean & Install dependencies
-        run: |
-          # On s'assure de ne pas avoir de résidus
-          rm -f package-lock.json
-          # --ignore-scripts : Empêche node-sass de tenter de compiler son binaire cassé
-          # --legacy-peer-deps : Évite les conflits de versions sur les vieux plugins Grunt/Webpack
-          npm install --ignore-scripts --legacy-peer-deps
+      - name: Installation des dépendances
+        # Plus besoin de --ignore-scripts ou --legacy-peer-deps avec le nouveau package.json
+        run: npm install
 
-      - name: Compile with Webpack
+      - name: Mise à jour de la version (Manuel uniquement)
+        if: github.event_name == 'workflow_dispatch'
+        run: npm version ${{ github.event.inputs.version }} --no-git-tag-version
+
+      - name: Build avec Webpack 5
         run: npm run build
-        env:
-          NODE_OPTIONS: --openssl-legacy-provider
 
-      - name: Force package name for npm publish
-        run: |
-          node -e "const fs = require('fs'); const pkg = JSON.parse(fs.readFileSync('./package.json', 'utf8')); pkg.name = 'wobal-noty'; fs.writeFileSync('./package.json', JSON.stringify(pkg, null, 2));"
-          echo "Package name forced to wobal-noty for publication."
-          
-      - name: Get current package.json version
-        id: get_version
-        run: |
-          # Lit la version actuelle du package.json et la met dans une variable de sortie
-          CURRENT_VERSION=$(node -p "require('./package.json').version")
-          echo "current_version=$CURRENT_VERSION" >> "$GITHUB_OUTPUT"
-          echo "Current package.json version: $CURRENT_VERSION"
-
-      - name: Update package.json version (if different)
-        if: ${{ github.event.inputs.version != steps.get_version.outputs.current_version }}
-        run: |
-          echo "Attempting to update version from ${{ steps.get_version.outputs.current_version }} to ${{ github.event.inputs.version }}"
-          npm version ${{ github.event.inputs.version }} --no-git-tag-version
-        
-      - name: Authenticate with npm
-        run: |
-          npm config set //registry.npmjs.org/:_authToken ${{ secrets.NPM_TOKEN }}
-
-      - name: Publish to npm
-        run: npm publish
+      - name: Publication sur NPM
+        # La branche 'if' permet d'éviter de publier sur chaque push si tu ne le souhaites pas
+        # Ou alors on publie uniquement lors d'un déclenchement manuel (workflow_dispatch)
+        if: github.event_name == 'workflow_dispatch'
+        run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Upload artifacts
+      - name: Archivage des artefacts (lib/)
         uses: actions/upload-artifact@v4
         with:
-          name: wobal-dist
-          path: dist/
+          name: wobal-noty-build
+          path: lib/
